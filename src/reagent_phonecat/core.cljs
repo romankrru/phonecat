@@ -5,18 +5,31 @@
 
 (defonce app-state (atom {:text "Hello world!"}))
 
-(def static-content
-  "Some sample, statically defined DOM content"
-  [:ul#phones-list
-   [:li.phone-item
-    [:span "Nexus S"]
-    [:p "Fast just got faster with Nexus S"]]
-   [:li.phone-item
-    [:span "Motorola XOOM with WI-FI"]
-    [:p "The Next, Next Generation tablet."]]])
+(declare <phones-list>
+         <phone-item>)
+
+(def hardcoded-phones-data
+  [{:name "Nexus S"
+    :description "Fast just got fater"}
+   {:name "Motorola XOOM with WI-FI"
+    :description "The Next, Next Generation Tablet."}])
 
 
-(reagent/render-component static-content
+(defn <phone-list>
+  [phones-list]
+  [:div.container-fluid
+   [:ul
+    (for [phone phones-list]
+      ^{:key (:name phone)}
+      [<phone-item> phone])]])
+
+(defn <phone-item>
+  [{:keys [name description]}]
+  [:li.phone-item
+   [:span name]
+   [:p description]])
+
+(reagent/render-component [<phone-list> hardcoded-phones-data]
                           (. js/document (getElementById "app")))
 
 (defn on-js-reload [])
