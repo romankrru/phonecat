@@ -26,10 +26,24 @@
          (some #(re-find qp %)))))
 
 (defonce state (atom {:phones hardcoded-phones-data
-                      :search ""}))
+                      :search ""
+                      :order-prop :name}))
+
+(def order-prop-state (reagent/cursor state [:order-prop]))
 
 (declare <phones-list>
          <phone-item>)
+
+(defn <order-prop-select> []
+  [:select {:value @order-prop-state
+            :on-change #(reset!
+                               order-prop-state
+                               (-> %
+                                   .-target
+                                   .-value
+                                   keyword))}
+   [:option {:value :name} "Alphabetical"]
+   [:option {:value :age} "Newest"]])
 
 (defn <search-cpnt> [search]
   [:span
@@ -41,19 +55,24 @@
                                 update-search
                                 (-> e .-target .-value)))}]])
 
-
 (defn <top-cpnt> []
   (let [{:keys [phones search]} @state]
     [:div.container-fluid
      [:div.row
-       [:div.col-4 [<search-cpnt> search]]
-       [:div.col-8 [<phones-list> phones search]]]]))
+       [:div.col-4
+        [<search-cpnt> search]
+        [:br]
+        "Sort by:"
+        [<order-prop-select>]]
+       [:div.col-8 [<phones-list> phones search @order-prop-state]]]]))
 
 (defn <phones-list>
-  [phones-list]
+  [phones-list search order-prop]
   [:div.container-fluid
    [:ul
-    (for [phone phones-list]
+    (for [phone (->> phones-list
+                     (filter #(matches-search? search %))
+                     (sort-by order-prop))]
       ^{:key (:name phone)}
       [<phone-item> phone])]])
 
