@@ -61,8 +61,7 @@
      [:div.row
        [:div.col-4
         [<search-cpnt> search]
-        [:br]
-        "Sort by:"
+        [:br] [:br] "Sort by: "
         [<order-prop-select>]]
        [:div.col-8 [<phones-list> phones search @order-prop-state]]]]))
 
