@@ -5,15 +5,18 @@
 
 (defonce app-state (atom {:text "Hello world!"}))
 
-(def static content
-  "Some sample, statically defined DOM content")
+(def static-content
+  "Some sample, statically defined DOM content"
+  [:ul#phones-list
+   [:li.phone-item
+    [:span "Nexus S"]
+    [:p "Fast just got faster with Nexus S"]]
+   [:li.phone-item
+    [:span "Motorola XOOM with WI-FI"]
+    [:p "The Next, Next Generation tablet."]]])
 
-(defn app []
-  [:div
-   [:h1 (:text @app-state)]
-   [:h3 "Edit this and watch it change!"]])
 
-(reagent/render-component [app]
+(reagent/render-component static-content
                           (. js/document (getElementById "app")))
 
 (defn on-js-reload [])
